@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "about": "About",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "name": "Your Name",
+    "title": "Full Stack Developer & Creative Problem Solver",
+    "subtitle": "I craft digital experiences that blend innovation with functionality",
+    "cta": "View My Work",
+    "scrollHint": "Scroll to explore"
+  },
+  "projects": {
+    "title": "Featured Projects",
+    "subtitle": "A collection of my recent work and creative experiments",
+    "filter": {
+      "all": "All",
+      "web": "Web Development",
+      "mobile": "Mobile Apps",
+      "design": "UI/UX Design",
+      "3d": "3D & Interactive"
+    },
+    "viewProject": "View Project",
+    "liveDemo": "Live Demo",
+    "sourceCode": "Source Code",
+    "searchPlaceholder": "Search projects..."
+  },
+  "skills": {
+    "title": "Skills & Technologies",
+    "subtitle": "Tools and technologies I work with",
+    "categories": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "tools": "Tools & Others",
+      "design": "Design"
+    },
+    "proficiency": "Proficiency"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Get to know me better",
+    "bio": "I'm a passionate full-stack developer based in the Netherlands, specializing in creating exceptional digital experiences. With a strong foundation in modern web technologies and a keen eye for design, I transform ideas into reality.",
+    "experience": "Experience",
+    "timeline": {
+      "present": "Present",
+      "education": "Education",
+      "work": "Work Experience"
+    }
+  },
+  "contact": {
+    "title": "Let's Work Together",
+    "subtitle": "Have a project in mind? Let's create something amazing!",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "message": "Message",
+      "messagePlaceholder": "Tell me about your project...",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! I'll get back to you soon.",
+      "error": "Oops! Something went wrong. Please try again.",
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email"
+    },
+    "alternative": "Or reach me at",
+    "social": "Find me on"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "madeWith": "Made with",
+    "and": "and",
+    "by": "by"
+  },
+  "loading": "Loading...",
+  "backToTop": "Back to top"
+}

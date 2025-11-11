@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Projecten",
+    "about": "Over Mij",
+    "skills": "Vaardigheden",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hoi, ik ben",
+    "name": "Jouw Naam",
+    "title": "Full Stack Developer & Creatieve Probleemoplosser",
+    "subtitle": "Ik creëer digitale ervaringen die innovatie combineren met functionaliteit",
+    "cta": "Bekijk Mijn Werk",
+    "scrollHint": "Scroll om te verkennen"
+  },
+  "projects": {
+    "title": "Uitgelichte Projecten",
+    "subtitle": "Een verzameling van mijn recente werk en creatieve experimenten",
+    "filter": {
+      "all": "Alle",
+      "web": "Webontwikkeling",
+      "mobile": "Mobiele Apps",
+      "design": "UI/UX Design",
+      "3d": "3D & Interactief"
+    },
+    "viewProject": "Bekijk Project",
+    "liveDemo": "Live Demo",
+    "sourceCode": "Broncode",
+    "searchPlaceholder": "Zoek projecten..."
+  },
+  "skills": {
+    "title": "Vaardigheden & Technologieën",
+    "subtitle": "Tools en technologieën waarmee ik werk",
+    "categories": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "tools": "Tools & Overige",
+      "design": "Design"
+    },
+    "proficiency": "Bekwaamheid"
+  },
+  "about": {
+    "title": "Over Mij",
+    "subtitle": "Leer mij beter kennen",
+    "bio": "Ik ben een gepassioneerde full-stack developer uit Nederland, gespecialiseerd in het creëren van uitzonderlijke digitale ervaringen. Met een sterke basis in moderne webtechnologieën en een scherp oog voor design, transformeer ik ideeën naar werkelijkheid.",
+    "experience": "Ervaring",
+    "timeline": {
+      "present": "Heden",
+      "education": "Opleiding",
+      "work": "Werkervaring"
+    }
+  },
+  "contact": {
+    "title": "Laten We Samenwerken",
+    "subtitle": "Heb je een project in gedachten? Laten we iets geweldigs maken!",
+    "form": {
+      "name": "Naam",
+      "namePlaceholder": "Jouw naam",
+      "email": "E-mail",
+      "emailPlaceholder": "jouw@email.nl",
+      "message": "Bericht",
+      "messagePlaceholder": "Vertel me over je project...",
+      "send": "Verstuur Bericht",
+      "sending": "Verzenden...",
+      "success": "Bericht succesvol verzonden! Ik neem snel contact met je op.",
+      "error": "Oeps! Er ging iets mis. Probeer het opnieuw.",
+      "required": "Dit veld is verplicht",
+      "invalidEmail": "Voer een geldig e-mailadres in"
+    },
+    "alternative": "Of bereik me op",
+    "social": "Vind me op"
+  },
+  "footer": {
+    "rights": "Alle rechten voorbehouden",
+    "madeWith": "Gemaakt met",
+    "and": "en",
+    "by": "door"
+  },
+  "loading": "Laden...",
+  "backToTop": "Terug naar boven"
+}
