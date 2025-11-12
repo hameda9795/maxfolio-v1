@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0F0A1E;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 244, 198, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 244, 198, 0.5);
+}
+
+/* Glass Card Effect */
+.glass-card {
+  background: rgba(31, 21, 51, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply px-6 py-3 rounded-lg bg-gradient-to-r from-electric-blue to-neon-pink text-white font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-electric-blue/50;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-lg bg-white/10 text-white font-semibold transition-all duration-300 hover:bg-white/20;
+}
+
+.btn-danger {
+  @apply px-6 py-3 rounded-lg bg-red-600 text-white font-semibold transition-all duration-300 hover:bg-red-700;
+}
+
+/* Input Styles */
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg glass-card text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-blue transition-all;
+}
+
+/* Card Styles */
+.stat-card {
+  @apply glass-card rounded-2xl p-6 transition-all duration-300 hover:scale-105 cursor-pointer;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-electric-blue to-neon-pink bg-clip-text text-transparent;
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 3px solid rgba(15, 244, 198, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid #0FF4C6;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Table Styles */
+.table-container {
+  @apply glass-card rounded-2xl overflow-hidden;
+}
+
+.table {
+  @apply w-full;
+}
+
+.table thead {
+  @apply bg-white/5;
+}
+
+.table th {
+  @apply px-6 py-4 text-left text-sm font-semibold text-gray-300 uppercase tracking-wider;
+}
+
+.table td {
+  @apply px-6 py-4 text-sm text-gray-300 border-t border-white/5;
+}
+
+.table tbody tr {
+  @apply transition-all duration-200 hover:bg-white/5;
+}
+
+/* Badge Styles */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.badge-success {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.badge-warning {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.badge-danger {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.badge-info {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply glass-card rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* React Quill Editor Styles */
+.ql-toolbar {
+  @apply glass-card border-b border-white/10 rounded-t-lg;
+}
+
+.ql-container {
+  @apply glass-card rounded-b-lg;
+}
+
+.ql-editor {
+  @apply text-white min-h-[200px];
+}
+
+.ql-stroke {
+  stroke: #fff;
+}
+
+.ql-fill {
+  fill: #fff;
+}
+
+.ql-picker-label {
+  color: #fff;
+}
