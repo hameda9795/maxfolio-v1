@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { messagesAPI, handleAPIError } from '../utils/api';
 import confetti from 'canvas-confetti';
 
 const Contact = () => {
@@ -8,6 +9,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: '',
     message: '',
   });
   const [errors, setErrors] = useState({});
@@ -34,6 +36,10 @@ const Contact = () => {
       newErrors.email = t('contact.form.invalidEmail');
     }
 
+    if (!formData.subject.trim()) {
+      newErrors.subject = t('contact.form.required');
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = t('contact.form.required');
     }
@@ -50,11 +56,13 @@ const Contact = () => {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Send message to backend
+      await messagesAPI.create(formData);
+
       setIsSubmitting(false);
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', subject: '', message: '' });
 
       // Trigger confetti
       confetti({
@@ -66,7 +74,14 @@ const Contact = () => {
 
       // Reset status after 5 seconds
       setTimeout(() => setSubmitStatus(null), 5000);
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to send message:', handleAPIError(error));
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+
+      // Reset error status after 5 seconds
+      setTimeout(() => setSubmitStatus(null), 5000);
+    }
   };
 
   const handleChange = (e) => {
@@ -199,6 +214,40 @@ const Contact = () => {
                       className="text-red-400 text-sm mt-1 font-inter"
                     >
                       {errors.email}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Subject Field */}
+              <div>
+                <label
+                  htmlFor="subject"
+                  className="block text-electric-blue font-space font-semibold mb-2"
+                >
+                  {t('contact.form.subject') || 'Subject'}
+                </label>
+                <motion.input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder={t('contact.form.subjectPlaceholder') || 'What do you want to discuss?'}
+                  className={`w-full px-6 py-4 rounded-xl glass-card text-white placeholder-gray-400 font-inter focus:outline-none focus:ring-2 transition-all ${
+                    errors.subject ? 'ring-2 ring-red-500' : 'focus:ring-electric-blue'
+                  }`}
+                  whileFocus={{ scale: 1.02 }}
+                />
+                <AnimatePresence>
+                  {errors.subject && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-red-400 text-sm mt-1 font-inter"
+                    >
+                      {errors.subject}
                     </motion.p>
                   )}
                 </AnimatePresence>

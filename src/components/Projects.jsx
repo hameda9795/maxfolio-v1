@@ -2,79 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { projectsAPI, handleAPIError } from '../utils/api';
 import VanillaTilt from 'vanilla-tilt';
-
-const projectsData = [
-  {
-    id: 1,
-    title: 'Restaurant Management App',
-    slug: 'restaurant-management-app',
-    category: 'web',
-    description: 'Complete ordering & kitchen management system',
-    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
-    tech: ['React', 'Node.js', 'MongoDB', 'Socket.io'],
-    size: 'large', // 2x2
-    demo: 'https://restaurant-demo.vercel.app',
-    code: 'https://github.com/yourusername/restaurant-management',
-  },
-  {
-    id: 2,
-    title: 'E-Commerce Platform',
-    slug: 'e-commerce-platform',
-    category: 'web',
-    description: 'Modern shopping experience with AR product preview',
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
-    tech: ['Next.js', 'Tailwind', 'Stripe', 'Three.js'],
-    size: 'medium', // 1x2
-    demo: 'https://ecommerce-demo.vercel.app',
-    code: 'https://github.com/yourusername/ecommerce-platform',
-  },
-  {
-    id: 3,
-    title: 'Fitness Tracker App',
-    slug: 'fitness-tracker-app',
-    category: 'mobile',
-    description: 'Track workouts, nutrition, and progress with AI coaching',
-    image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&h=600&fit=crop',
-    tech: ['React Native', 'Node.js', 'MongoDB', 'TensorFlow'],
-    size: 'small', // 1x1
-    demo: null,
-    code: null,
-  },
-  {
-    id: 4,
-    title: 'Creative Portfolio Builder',
-    category: 'design',
-    description: 'Drag-and-drop portfolio creator for designers',
-    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop',
-    tech: ['Vue.js', 'GSAP', 'Firebase'],
-    size: 'small', // 1x1
-    demo: '#',
-    code: '#',
-  },
-  {
-    id: 5,
-    title: '3D Product Configurator',
-    category: '3d',
-    description: 'Interactive 3D product customization tool',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=600&fit=crop',
-    tech: ['Three.js', 'React', 'WebGL', 'GLSL'],
-    size: 'medium', // 2x1
-    demo: '#',
-    code: '#',
-  },
-  {
-    id: 6,
-    title: 'Social Media Analytics',
-    category: 'web',
-    description: 'Comprehensive social media insights and reporting',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-    tech: ['React', 'Chart.js', 'Express', 'PostgreSQL'],
-    size: 'small', // 1x1
-    demo: '#',
-    code: '#',
-  },
-];
 
 const ProjectCard = ({ project, index }) => {
   const { t } = useTranslation();
@@ -126,8 +55,8 @@ const ProjectCard = ({ project, index }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <motion.img
-          src={project.image}
-          alt={project.title}
+          src={project.hero?.image || project.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop'}
+          alt={project.hero?.alt || project.title}
           className="w-full h-full object-cover"
           animate={{
             scale: isHovered ? 1.1 : 1,
@@ -155,12 +84,12 @@ const ProjectCard = ({ project, index }) => {
           {project.title}
         </h3>
         <p className="text-gray-300 font-inter mb-4 line-clamp-2">
-          {project.description}
+          {project.subtitle || project.description || project.overview?.description}
         </p>
 
         {/* Tech Stack */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.tech.map((tech, idx) => (
+          {(project.technologies?.frontend || project.tech || []).slice(0, 4).map((tech, idx) => (
             <span
               key={idx}
               className="px-3 py-1 text-xs font-space rounded-full bg-white/10 backdrop-blur-sm text-electric-blue border border-electric-blue/30"
@@ -177,20 +106,28 @@ const ProjectCard = ({ project, index }) => {
           animate={{ y: isHovered ? 0 : 20, opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          <a
-            href={project.demo}
-            className="px-6 py-2 rounded-full bg-electric-blue text-deep-purple font-space font-semibold hover:bg-neon-pink hover:text-white transition-colors clickable"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {t('projects.liveDemo')}
-          </a>
-          <a
-            href={project.code}
-            className="px-6 py-2 rounded-full border-2 border-electric-blue text-electric-blue font-space font-semibold hover:bg-electric-blue hover:text-deep-purple transition-colors clickable"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {t('projects.sourceCode')}
-          </a>
+          {project.links?.live && (
+            <a
+              href={project.links.live}
+              className="px-6 py-2 rounded-full bg-electric-blue text-deep-purple font-space font-semibold hover:bg-neon-pink hover:text-white transition-colors clickable"
+              onClick={(e) => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('projects.liveDemo')}
+            </a>
+          )}
+          {project.links?.github && (
+            <a
+              href={project.links.github}
+              className="px-6 py-2 rounded-full border-2 border-electric-blue text-electric-blue font-space font-semibold hover:bg-electric-blue hover:text-deep-purple transition-colors clickable"
+              onClick={(e) => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('projects.sourceCode')}
+            </a>
+          )}
         </motion.div>
       </motion.div>
 
@@ -213,14 +150,36 @@ const Projects = () => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const filters = ['all', 'web', 'mobile', 'design', '3d'];
 
-  const filteredProjects = projectsData.filter((project) => {
+  // Fetch projects from backend
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await projectsAPI.getAll({
+          published: true,
+          ...(filter !== 'all' && { category: filter }),
+          ...(searchQuery && { search: searchQuery })
+        });
+        setProjects(response.data.data || []);
+      } catch (error) {
+        console.error('Failed to fetch projects:', handleAPIError(error));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [filter, searchQuery]);
+
+  const filteredProjects = projects.filter((project) => {
     const matchesFilter = filter === 'all' || project.category === filter;
     const matchesSearch =
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase());
+      project.subtitle?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
