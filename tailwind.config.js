@@ -12,6 +12,7 @@ export default {
         'neon-pink': '#FF006E',
         'dark-bg': '#0A0414',
         'glass-white': 'rgba(255, 255, 255, 0.1)',
+        'border': 'rgba(255, 255, 255, 0.1)',
       },
       fontFamily: {
         'space': ['"Space Grotesk"', 'sans-serif'],
