@@ -1,4 +1,5 @@
 import { Suspense, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Lenis from 'lenis';
 
@@ -12,13 +13,50 @@ import Skills from './components/Skills';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ProjectDetail from './components/ProjectDetail/ProjectDetail';
 
-function App() {
+// Scroll to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+// Home Page Component
+function HomePage() {
+  return (
+    <>
+      <Hero />
+      <Projects />
+      <Skills />
+      <About />
+      <Contact />
+    </>
+  );
+}
+
+// Project Detail Page Wrapper
+function ProjectDetailPage() {
+  const location = useLocation();
+  const slug = location.pathname.split('/project/')[1];
+
+  return <ProjectDetail slug={slug} />;
+}
+
+function AppContent() {
   const { i18n } = useTranslation();
   const [lenisInstance, setLenisInstance] = useState(null);
+  const location = useLocation();
+  const isProjectDetailPage = location.pathname.startsWith('/project/');
 
-  // Initialize smooth scroll with Lenis
+  // Initialize smooth scroll with Lenis (only on home page)
   useEffect(() => {
+    if (isProjectDetailPage) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,7 +77,7 @@ function App() {
     return () => {
       lenis.destroy();
     };
-  }, []);
+  }, [isProjectDetailPage]);
 
   // Update document language attribute
   useEffect(() => {
@@ -72,36 +110,31 @@ function App() {
   }, []);
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-h-screen bg-dark-bg">
-          <div className="loader" />
-        </div>
-      }
-    >
-      <div className="relative overflow-x-hidden">
-        {/* Preloader */}
-        <Preloader />
+    <div className="relative overflow-x-hidden">
+      <ScrollToTop />
 
-        {/* Custom Cursor */}
-        <CustomCursor />
+      {/* Preloader (only on home page) */}
+      {!isProjectDetailPage && <Preloader />}
 
-        {/* Navigation */}
-        <Navigation />
+      {/* Custom Cursor */}
+      <CustomCursor />
 
-        {/* Main Content */}
-        <main>
-          <Hero />
-          <Projects />
-          <Skills />
-          <About />
-          <Contact />
-        </main>
+      {/* Navigation */}
+      <Navigation />
 
-        {/* Footer */}
-        <Footer />
+      {/* Main Content */}
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/project/:slug" element={<ProjectDetailPage />} />
+        </Routes>
+      </main>
 
-        {/* Scroll Progress Indicator */}
+      {/* Footer */}
+      <Footer />
+
+      {/* Scroll Progress Indicator (only on home page) */}
+      {!isProjectDetailPage && (
         <div className="fixed top-0 left-0 w-full h-1 bg-transparent z-[60] no-print">
           <div
             className="h-full bg-gradient-to-r from-electric-blue to-neon-pink transition-all duration-150"
@@ -112,7 +145,7 @@ function App() {
             id="scroll-progress"
           />
         </div>
-      </div>
+      )}
 
       {/* Global Styles for Easter Eggs */}
       <style>{`
@@ -121,11 +154,27 @@ function App() {
           100% { filter: hue-rotate(360deg); }
         }
       `}</style>
-    </Suspense>
+    </div>
   );
 }
 
-// Add scroll progress tracking
+function App() {
+  return (
+    <Router>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-screen bg-dark-bg">
+            <div className="loader" />
+          </div>
+        }
+      >
+        <AppContent />
+      </Suspense>
+    </Router>
+  );
+}
+
+// Add scroll progress tracking (only for home page)
 if (typeof window !== 'undefined') {
   window.addEventListener('scroll', () => {
     const scrollProgress = document.getElementById('scroll-progress');

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import VanillaTilt from 'vanilla-tilt';
@@ -6,36 +7,39 @@ import VanillaTilt from 'vanilla-tilt';
 const projectsData = [
   {
     id: 1,
-    title: 'AI-Powered Analytics Dashboard',
+    title: 'Restaurant Management App',
+    slug: 'restaurant-management-app',
     category: 'web',
-    description: 'Real-time data visualization with machine learning insights',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-    tech: ['React', 'TypeScript', 'D3.js', 'Python'],
+    description: 'Complete ordering & kitchen management system',
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
+    tech: ['React', 'Node.js', 'MongoDB', 'Socket.io'],
     size: 'large', // 2x2
-    demo: '#',
-    code: '#',
+    demo: 'https://restaurant-demo.vercel.app',
+    code: 'https://github.com/yourusername/restaurant-management',
   },
   {
     id: 2,
     title: 'E-Commerce Platform',
+    slug: 'e-commerce-platform',
     category: 'web',
     description: 'Modern shopping experience with AR product preview',
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
     tech: ['Next.js', 'Tailwind', 'Stripe', 'Three.js'],
     size: 'medium', // 1x2
-    demo: '#',
-    code: '#',
+    demo: 'https://ecommerce-demo.vercel.app',
+    code: 'https://github.com/yourusername/ecommerce-platform',
   },
   {
     id: 3,
     title: 'Fitness Tracker App',
+    slug: 'fitness-tracker-app',
     category: 'mobile',
     description: 'Track workouts, nutrition, and progress with AI coaching',
     image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&h=600&fit=crop',
     tech: ['React Native', 'Node.js', 'MongoDB', 'TensorFlow'],
     size: 'small', // 1x1
-    demo: '#',
-    code: '#',
+    demo: null,
+    code: null,
   },
   {
     id: 4,
@@ -101,19 +105,24 @@ const ProjectCard = ({ project, index }) => {
     large: 'col-span-1 md:col-span-2 row-span-2 h-[40rem]',
   };
 
+  // Wrap card in Link if slug exists
+  const CardWrapper = project.slug ? Link : 'div';
+  const wrapperProps = project.slug ? { to: `/project/${project.slug}` } : {};
+
   return (
-    <motion.div
-      ref={cardRef}
-      className={`project-card relative rounded-3xl overflow-hidden glass-card cursor-pointer group ${
-        sizeClasses[project.size]
-      }`}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <CardWrapper {...wrapperProps} className="block">
+      <motion.div
+        ref={cardRef}
+        className={`project-card relative rounded-3xl overflow-hidden glass-card cursor-pointer group ${
+          sizeClasses[project.size]
+        }`}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       {/* Background Image */}
       <div className="absolute inset-0">
         <motion.img
@@ -196,6 +205,7 @@ const ProjectCard = ({ project, index }) => {
         transition={{ duration: 2, repeat: Infinity }}
       />
     </motion.div>
+    </CardWrapper>
   );
 };
 
