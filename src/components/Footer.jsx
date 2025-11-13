@@ -1,28 +1,56 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { aboutAPI, handleAPIError } from '../utils/api';
 
 const Footer = () => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const [footerData, setFooterData] = useState(null);
+
+  // Default data (fallback)
+  const defaultQuickLinks = [
+    { label: 'Home', href: '#home' },
+    { label: 'Projects', href: '#projects' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  const defaultSocialLinks = [
+    { platform: 'GitHub', url: 'https://github.com', icon: '💻' },
+    { platform: 'LinkedIn', url: 'https://linkedin.com', icon: '💼' },
+    { platform: 'Twitter', url: 'https://twitter.com', icon: '🐦' },
+  ];
+
+  const [quickLinks, setQuickLinks] = useState(defaultQuickLinks);
+  const [socialLinks, setSocialLinks] = useState(defaultSocialLinks);
+
+  // Fetch footer data from backend
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      try {
+        const response = await aboutAPI.getFooter();
+        const data = response.data.data;
+        setFooterData(data);
+
+        if (data?.quickLinks && data.quickLinks.length > 0) {
+          setQuickLinks(data.quickLinks);
+        }
+
+        if (data?.socialLinks && data.socialLinks.length > 0) {
+          setSocialLinks(data.socialLinks);
+        }
+      } catch (error) {
+        console.error('Failed to fetch footer:', handleAPIError(error));
+        // Keep default data
+      }
+    };
+
+    fetchFooterData();
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const quickLinks = [
-    { key: 'home', href: '#home' },
-    { key: 'projects', href: '#projects' },
-    { key: 'skills', href: '#skills' },
-    { key: 'about', href: '#about' },
-    { key: 'contact', href: '#contact' },
-  ];
-
-  const socialLinks = [
-    { name: 'GitHub', url: 'https://github.com', icon: '💻' },
-    { name: 'LinkedIn', url: 'https://linkedin.com', icon: '💼' },
-    { name: 'Twitter', url: 'https://twitter.com', icon: '🐦' },
-    { name: 'Email', url: 'mailto:hello@example.com', icon: '📧' },
-  ];
 
   return (
     <footer className="relative bg-deep-purple border-t border-white/10 overflow-hidden">
@@ -43,7 +71,7 @@ const Footer = () => {
               {'<DEV />'}
             </h3>
             <p className="text-gray-400 font-inter leading-relaxed">
-              Building exceptional digital experiences with modern technologies and creative solutions.
+              {footerData?.tagline || "Let's create something amazing together"}
             </p>
           </motion.div>
 
@@ -58,8 +86,8 @@ const Footer = () => {
               Quick Links
             </h4>
             <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.key}>
+              {quickLinks.map((link, index) => (
+                <li key={link.href || index}>
                   <motion.a
                     href={link.href}
                     className="text-gray-400 hover:text-electric-blue transition-colors font-inter clickable"
@@ -72,7 +100,7 @@ const Footer = () => {
                       }
                     }}
                   >
-                    {t(`nav.${link.key}`)}
+                    {link.label}
                   </motion.a>
                 </li>
               ))}
@@ -90,9 +118,9 @@ const Footer = () => {
               Connect
             </h4>
             <div className="flex flex-wrap gap-3">
-              {socialLinks.map((social) => (
+              {socialLinks.map((social, index) => (
                 <motion.a
-                  key={social.name}
+                  key={social.platform || index}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -121,8 +149,7 @@ const Footer = () => {
             viewport={{ once: true }}
             className="text-gray-400 font-inter text-sm text-center md:text-left"
           >
-            © {currentYear} {t('footer.rights')} •{' '}
-            <span className="gradient-text font-semibold">Your Name</span>
+            {footerData?.copyright || `© ${currentYear} All rights reserved`}
           </motion.p>
 
           <motion.p

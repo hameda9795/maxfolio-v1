@@ -158,30 +158,48 @@ const Projects = () => {
   // Fetch projects from backend
   useEffect(() => {
     const fetchProjects = async () => {
+      setLoading(true);
       try {
         const response = await projectsAPI.getAll({
           published: true,
-          ...(filter !== 'all' && { category: filter }),
-          ...(searchQuery && { search: searchQuery })
+          limit: 100, // Get more projects
         });
         setProjects(response.data.data || []);
       } catch (error) {
         console.error('Failed to fetch projects:', handleAPIError(error));
+        setProjects([]); // Set empty array on error
       } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
-  }, [filter, searchQuery]);
+  }, []); // Only fetch once on mount
 
   const filteredProjects = projects.filter((project) => {
     const matchesFilter = filter === 'all' || project.category === filter;
     const matchesSearch =
+      !searchQuery ||
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.subtitle?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  // Show loading state
+  if (loading) {
+    return (
+      <section id="projects" className="section-padding relative overflow-hidden">
+        <div className="container-custom">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block w-16 h-16 border-4 border-electric-blue border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-300 font-space">Loading projects...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="section-padding relative overflow-hidden">
@@ -259,7 +277,7 @@ const Projects = () => {
             transition={{ duration: 0.5 }}
           >
             {filteredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
+              <ProjectCard key={project._id || project.id || index} project={project} index={index} />
             ))}
           </motion.div>
         </AnimatePresence>
