@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { createParticleSystem } from '../animations/threeScene';
+import { aboutAPI, handleAPIError } from '../utils/api';
 import gsap from 'gsap';
 
 const Hero = () => {
@@ -9,6 +10,22 @@ const Hero = () => {
   const canvasRef = useRef(null);
   const titleRef = useRef(null);
   const [cleanup, setCleanup] = useState(null);
+  const [heroData, setHeroData] = useState(null);
+
+  // Fetch hero data from backend
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        const response = await aboutAPI.getHero();
+        setHeroData(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch hero data:', handleAPIError(error));
+        // Will fall back to translation keys
+      }
+    };
+
+    fetchHeroData();
+  }, []);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -86,9 +103,9 @@ const Hero = () => {
         >
           <span
             className="glitch font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-glow"
-            data-text={t('hero.name')}
+            data-text={heroData?.name || t('hero.name')}
           >
-            {t('hero.name')}
+            {heroData?.name || t('hero.name')}
           </span>
         </motion.h1>
 
@@ -100,7 +117,7 @@ const Hero = () => {
           transition={{ duration: 1, delay: 1 }}
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-space font-bold mb-6 gradient-text"
         >
-          {t('hero.title')}
+          {heroData?.title || t('hero.title')}
         </motion.h2>
 
         {/* Subtitle */}
@@ -110,7 +127,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 1.2 }}
           className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-12 font-inter"
         >
-          {t('hero.subtitle')}
+          {heroData?.description || t('hero.subtitle')}
         </motion.p>
 
         {/* CTA Button */}
@@ -123,7 +140,7 @@ const Hero = () => {
           onClick={scrollToProjects}
           className="neon-button clickable"
         >
-          {t('hero.cta')}
+          {heroData?.ctaText || t('hero.cta')}
         </motion.button>
 
         {/* Scroll Indicator */}

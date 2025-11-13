@@ -13,6 +13,7 @@ const authRoutes = require('./routes/auth');
 const projectRoutes = require('./routes/projects');
 const skillRoutes = require('./routes/skills');
 const messageRoutes = require('./routes/messages');
+const aboutRoutes = require('./routes/about');
 
 const app = express();
 
@@ -21,8 +22,21 @@ connectDB();
 
 // Security middleware
 app.use(helmet());
+
+// CORS - Allow multiple frontend URLs
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
@@ -62,6 +76,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/about', aboutRoutes);
 
 // 404 handler
 app.use((req, res) => {

@@ -1,41 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-
-const skillsData = {
-  frontend: [
-    { name: 'React', level: 95, icon: '⚛️' },
-    { name: 'TypeScript', level: 90, icon: '📘' },
-    { name: 'Next.js', level: 88, icon: '▲' },
-    { name: 'Tailwind CSS', level: 92, icon: '🎨' },
-    { name: 'Three.js', level: 85, icon: '🎲' },
-    { name: 'GSAP', level: 87, icon: '✨' },
-  ],
-  backend: [
-    { name: 'Node.js', level: 90, icon: '🟢' },
-    { name: 'Python', level: 85, icon: '🐍' },
-    { name: 'PostgreSQL', level: 82, icon: '🐘' },
-    { name: 'MongoDB', level: 88, icon: '🍃' },
-    { name: 'GraphQL', level: 80, icon: '◈' },
-    { name: 'Redis', level: 75, icon: '🔴' },
-  ],
-  tools: [
-    { name: 'Git', level: 93, icon: '🔧' },
-    { name: 'Docker', level: 85, icon: '🐳' },
-    { name: 'AWS', level: 78, icon: '☁️' },
-    { name: 'Figma', level: 88, icon: '🎯' },
-    { name: 'Jest', level: 82, icon: '🃏' },
-    { name: 'Webpack', level: 80, icon: '📦' },
-  ],
-  design: [
-    { name: 'UI/UX Design', level: 90, icon: '🎨' },
-    { name: 'Responsive Design', level: 95, icon: '📱' },
-    { name: 'Accessibility', level: 88, icon: '♿' },
-    { name: 'Animation', level: 92, icon: '🎬' },
-    { name: 'Prototyping', level: 85, icon: '✏️' },
-    { name: 'Design Systems', level: 87, icon: '📐' },
-  ],
-};
+import { skillsAPI, handleAPIError } from '../utils/api';
 
 const SkillCard = ({ skill, index, category }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -126,6 +92,47 @@ const SkillCard = ({ skill, index, category }) => {
 const Skills = () => {
   const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState('frontend');
+  const [skills, setSkills] = useState([]);
+  const [skillsData, setSkillsData] = useState({
+    frontend: [],
+    backend: [],
+    tools: [],
+    design: [],
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Fetch skills from backend
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await skillsAPI.getAll({ published: true });
+        const fetchedSkills = response.data.data || [];
+
+        // Organize skills by category
+        const organized = {
+          frontend: [],
+          backend: [],
+          tools: [],
+          design: [],
+        };
+
+        fetchedSkills.forEach((skill) => {
+          if (organized[skill.category]) {
+            organized[skill.category].push(skill);
+          }
+        });
+
+        setSkillsData(organized);
+        setSkills(fetchedSkills);
+      } catch (error) {
+        console.error('Failed to fetch skills:', handleAPIError(error));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   const categories = Object.keys(skillsData);
 

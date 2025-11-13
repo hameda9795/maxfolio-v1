@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { aboutAPI, handleAPIError } from '../utils/api';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const Navigation = () => {
@@ -9,14 +10,45 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [navData, setNavData] = useState(null);
 
-  const navItems = [
-    { key: 'home', href: '#home' },
-    { key: 'projects', href: '#projects' },
-    { key: 'skills', href: '#skills' },
-    { key: 'about', href: '#about' },
-    { key: 'contact', href: '#contact' },
+  // Default nav items (fallback)
+  const defaultNavItems = [
+    { key: 'home', label: 'Home', href: '#home', order: 1 },
+    { key: 'projects', label: 'Projects', href: '#projects', order: 2 },
+    { key: 'skills', label: 'Skills', href: '#skills', order: 3 },
+    { key: 'about', label: 'About', href: '#about', order: 4 },
+    { key: 'contact', label: 'Contact', href: '#contact', order: 5 },
   ];
+
+  const [navItems, setNavItems] = useState(defaultNavItems);
+
+  // Fetch navigation data from backend
+  useEffect(() => {
+    const fetchNavData = async () => {
+      try {
+        const response = await aboutAPI.getNavigation();
+        const data = response.data.data;
+        setNavData(data);
+
+        // Use backend links if available
+        if (data?.links && data.links.length > 0) {
+          const sortedLinks = [...data.links].sort((a, b) => (a.order || 0) - (b.order || 0));
+          setNavItems(sortedLinks.map(link => ({
+            key: link.label.toLowerCase(),
+            label: link.label,
+            href: link.href,
+            order: link.order
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch navigation:', handleAPIError(error));
+        // Keep default nav items
+      }
+    };
+
+    fetchNavData();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +104,7 @@ const Navigation = () => {
               handleNavClick('#home');
             }}
           >
-            {'<DEV />'}
+            {navData?.logo || '<DEV />'}
           </motion.a>
 
           {/* Desktop Navigation */}
@@ -90,7 +122,7 @@ const Navigation = () => {
                   handleNavClick(item.href);
                 }}
               >
-                {t(`nav.${item.key}`)}
+                {item.label || t(`nav.${item.key}`)}
                 <motion.span
                   className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-electric-blue to-neon-pink"
                   initial={{ width: 0 }}
@@ -164,7 +196,7 @@ const Navigation = () => {
                     handleNavClick(item.href);
                   }}
                 >
-                  {t(`nav.${item.key}`)}
+                  {item.label || t(`nav.${item.key}`)}
                 </motion.a>
               ))}
 
